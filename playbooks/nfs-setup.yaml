@@ -22,7 +22,7 @@
       ansible.builtin.lineinfile:
         path: /etc/exports
         regexp: '^/export/k8s'
-        line: '/export/k8s *(rw,sync,no_root_squash,no_subtree_check)'
+        line: '/export/k8s *(rw,sync,no_root_squash,no_subtree_check,insecure)'
       notify: restart nfs-server
 
     - name: create export directory
