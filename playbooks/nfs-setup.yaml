@@ -8,6 +8,14 @@
         name: nfs-kernel-server
         state: present
         update_cache: true
+        install_recommends: true
+      become: true
+    
+    - name: start nfs-server
+      ansible.builtin.service:
+        name: nfs-server
+        state: started
+        enabled: true
       become: true
 
     - name: configure NFS server
