@@ -1,20 +1,21 @@
 ---
-- name: ansible.builtin.package モジュールの使用例
+- name: nfs server setup
   hosts: all
   gather_facts: true
 
   tasks:
-    - name: Nginx をインストールする
+    - name: install nfs-krenel-server
       ansible.builtin.package:
-        name: kernel-nfs-server
+        name: nfs-kernel-server
         state: present
       become: true
-    - name: NFS サーバーの設定
+    - name: configure NFS server
       ansible.builtin.inlinefile:
         path: /etc/exports
         regexp: '^/export/k8s'
         line: '/export/k8s 10.0.1.0/24(rw,sync,no_root_squash,no_subtree_check)'
-    - name: Exportするフォルダの作成
+      notify: restart nfs-server
+    - name: create export directory
       ansible.builtin.file:
         path: /export/k8s
         state: directory
@@ -23,7 +24,9 @@
         mode: '0700'
         recurse: true
       become: true
-    - name: NFS サービスの起動
+
+  handlers:
+    - name: restart nfs-server
       ansible.builtin.service:
         name: nfs-server
         state: restarted
